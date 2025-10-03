@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: iconset-postgres
+    environment:
+      POSTGRES_DB: iconset
+      POSTGRES_USER: iconset_user
+      POSTGRES_PASSWORD: iconset_pass
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=en_US.UTF-8"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=2GB"
+      - "-c"
+      - "work_mem=128MB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "effective_cache_size=6GB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "max_parallel_workers_per_gather=4"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iconset_user -d iconset"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local

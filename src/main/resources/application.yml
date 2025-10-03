@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: icon-set-generator
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/iconset
+    username: postgres
+    password: 123456
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 10000
+      idle-timeout: 300000
+      max-lifetime: 600000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: false
+        use_sql_comments: false
+        jdbc:
+          batch_size: 100
+          fetch_size: 100
+    show-sql: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    default-schema: public
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  show-actuator: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+  metrics:
+    export:
+      simple:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.iconset: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    org.liquibase: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+iconset:
+  validation:
+    max-sets: 1000
+    max-items-per-set: 100
+    min-overlap-threshold: 0.0
+    max-overlap-threshold: 1.0

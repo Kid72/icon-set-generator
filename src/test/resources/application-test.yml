@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+  liquibase:
+    enabled: true
+    contexts: test
+
+logging:
+  level:
+    com.iconset: DEBUG
+    org.testcontainers: INFO
