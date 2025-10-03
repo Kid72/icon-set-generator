@@ -121,48 +121,6 @@ graph TB
 
 ---
 
-## 🧮 HPSS Algorithm: How It Works
-
-### Algorithm Flow
-
-```mermaid
-flowchart TD
-    Start([Request: N sets × M items<br/>Threshold T]) --> Validate{Feasibility<br/>Validation}
-
-    Validate -->|FAIL| Error[❌ InsufficientDataException<br/>Return error to client]
-    Validate -->|PASS| CalcParams[📐 Calculate Parameters<br/>max_overlap = ⌊2MT/(1+T)⌋<br/>partitions_per_set = collision_aware_L]
-
-    CalcParams --> ScaleDecision{Collision-Aware<br/>Scaling}
-
-    ScaleDecision -->|N ≤ 80| L3[L = 3 partitions<br/>C128,3 = 341K]
-    ScaleDecision -->|N ≤ 460| L4[L = 4 partitions<br/>C128,4 = 10.6M]
-    ScaleDecision -->|N ≤ 2200| L5[L = 5 partitions<br/>C128,5 = 242M]
-    ScaleDecision -->|N > 2200| L6[L = 6 partitions<br/>C128,6 = 4.3B]
-
-    L3 --> AssignPartitions
-    L4 --> AssignPartitions
-    L5 --> AssignPartitions
-    L6 --> AssignPartitions
-
-    AssignPartitions[🎲 Assign Partitions<br/>hashset_id * 999983 + offset mod 128] --> SampleIcons[📊 Sample Icons<br/>hashicon_id * 31 + set_id<br/>Take M icons per set]
-
-    SampleIcons --> Aggregate[📦 Aggregate Results<br/>N sets × M icons each]
-
-    Aggregate --> Verify{Quality Check<br/>All sets size = M?}
-
-    Verify -->|YES| Success[✅ Return N Sets<br/>Jaccard ≤ T guaranteed]
-    Verify -->|NO| Error
-
-    Success --> End([Response to Client])
-    Error --> End
-
-    style Start fill:#e1f5ff
-    style Success fill:#c8e6c9
-    style Error fill:#ffcdd2
-    style ScaleDecision fill:#fff3e0
-    style Validate fill:#f3e5f5
-```
-
 ### Step-by-Step Breakdown
 
 #### **Step 1: Feasibility Validation**
